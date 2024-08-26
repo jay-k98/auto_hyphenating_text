@@ -1,20 +1,8 @@
+import 'package:auto_hyphenating_text/src/hyphenation_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:hyphenator_impure/hyphenator.dart';
 
-/// This object is used to tell us acceptable hyphenation positions
-/// It is the default loader used unless a custom one is provided
-ResourceLoader? globalLoader;
-Hyphenator? _hyphenator;
-
-/// Inits the default global hyphenation loader. If this is omitted a custom hyphenation loader must be provided.
-Future<void> initHyphenation([DefaultResourceLoaderLanguage language = DefaultResourceLoaderLanguage.enUs]) async {
-  globalLoader = await DefaultResourceLoader.load(language);
-  _hyphenator = Hyphenator(
-    resource: globalLoader!,
-    hyphenateSymbol: '_',
-  );
-}
 
 /// A replacement for the default text object which supports hyphenation.
 class AutoHyphenatingText extends StatelessWidget {
@@ -144,9 +132,7 @@ class AutoHyphenatingText extends StatelessWidget {
       List<String> words = text.split(" ");
       List<InlineSpan> texts = <InlineSpan>[];
 
-      assert(globalLoader != null && _hyphenator != null, "AutoHyphenatingText not initialized! Remember to call initHyphenation(). This may require a full app restart.");
-
-      final hyphenator = _hyphenator!;
+      final hyphenator = HyphenationController.of(context).hyphenator;
 
       double singleSpaceWidth = getTextWidth(" ", effectiveTextStyle, textDirection, scaler);
       double currentLineSpaceUsed = 0;
